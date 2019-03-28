@@ -17,7 +17,7 @@ class NET0Command:
     code = 0
     data = bytearray()
 
-    def __init__(self, code: bytes, data: bytearray):
+    def __init__(self, code: int, data: bytearray):
         self.code = code
         self.data = data[:]
 

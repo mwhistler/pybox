@@ -1,11 +1,11 @@
 import serial
 import threading
 
-frames_received = []
 
 class Net0SerialPhy:
     serial_port = serial.Serial()
     receiver_thread = threading.Thread
+    frames_received = []
 
     def __init__(self, serial_port_name):
         self.open(serial_port_name)
@@ -21,14 +21,14 @@ class Net0SerialPhy:
             while data[-1] != 0x03:
                 data.append(self.serial_port.read()[0])  # data.append(struct.unpack(">B", self.serial_port.read())[0])
             print("data recv: " + str(data.hex()))
-            frames_received.append(data)
-            print("RECEIVED FREAMES QUEUE SIZE: " + str(frames_received.__len__()))
+            self.frames_received.append(data)
+            # print("RECEIVED FRAMES QUEUE SIZE: " + str(frames_received.__len__()))
             # return data
 
     def receive(self):
-        if frames_received.__len__() > 0:
-            received_frame = bytearray(frames_received[0])
-            frames_received.__delitem__(0)
+        if self.frames_received.__len__() > 0:
+            received_frame = bytearray(self.frames_received[0])
+            self.frames_received.__delitem__(0)
             return received_frame
         return None
 
