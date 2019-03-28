@@ -6,16 +6,26 @@ class Net0SerialPhy:
     serial_port = serial.Serial()
     receiver_thread = threading.Thread
     frames_received = []
+    stop_receiver_thread = 0
 
     def __init__(self, serial_port_name):
         self.open(serial_port_name)
         self.receiver_thread = threading.Thread(target=self.receiver)
+        self.stop_receiver_thread = 0
         self.receiver_thread.start()
 
+    # TODO: improve closing thread
+    def close(self):
+        self.stop_receiver_thread = 1
+        while self.receiver_thread.isAlive():
+            pass
+        self.serial_port.close()
+        print("Net0SerialPhy closed")
+
     def receiver(self):
-        while self.serial_port.is_open:
+        while self.stop_receiver_thread == 0 and self.serial_port.is_open:
             data = bytearray()
-            while self.serial_port.read() != bytes([0x02]):
+            while self.stop_receiver_thread == 0 and self.serial_port.read() != bytes([0x02]):
                 pass
             data.append(0x02)
             while data[-1] != 0x03:

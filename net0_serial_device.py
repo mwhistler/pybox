@@ -10,6 +10,7 @@ class Net0SerialDevice:
         self.phy = Net0SerialPhy(serial_port_name)
 
     # returns NET0CommandResult object:
+    # TODO: improve timeout handling
     def get_result(self):
         now = time.clock()
         while time.clock() - now < 10:
@@ -28,3 +29,6 @@ class Net0SerialDevice:
     def exec_command(self, command: net0_parser.NET0Command):
         self.send_command(command)
         return self.get_result()
+
+    def close(self):
+        self.phy.close()
