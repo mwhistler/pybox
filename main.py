@@ -1,7 +1,7 @@
 import testbox
 
 tbox = testbox.Testbox("COM6")
-for register in testbox.testBoxRegisters.keys():
-    tbox.cmd_read_register(register)
-# tbox.cmd_read_register('REG_SOFTWARE_VERSION')
+tbox.read_registers()
 tbox.print_registers()
+
+tbox.cmd_write_register('REG_CALIBRATION_WARNING_TIMESTAMP', bytearray([0x11, 0x22, 0x33, 0x44]))

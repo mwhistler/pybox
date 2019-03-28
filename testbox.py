@@ -52,12 +52,28 @@ class Testbox(Net0SerialDevice):
         for register, value in self.registers.items():
             print(register + ": " + str(bytearray(value).hex()))
 
+    # cmd_write_register works only with binary content
+    # TODO: create user friendly functions, for example: set_next_calibration_date(date) etc
     def cmd_write_register(self, register: testBoxRegisters, data: bytearray):
-        pass
+        if data.__len__() == bytearray(testBoxRegisters[register])[1]:
+            cmd = bytearray(testBoxRegisters[register]) + data
+            if cmd is not None:
+                rsp = self.exec_command(NET0Command(testBoxCommands['CMD_WRITE_REGISTER'], cmd))
+                if rsp.status == 0x00:
+                    # write the same to local copy:
+                    self.registers[register] = data
+                    print(register + " written successfully with " + str(data.hex()))
+                    return
+        print(register + "write FAILED")
 
     def cmd_configure_channel(self):
         pass
 
+    def cmd_set_channel(self):
+        pass
+
+    def cmd_get_channel(self):
+        pass
 
 
 class TestBoxMeasureResult:
