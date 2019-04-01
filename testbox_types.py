@@ -266,6 +266,11 @@ class TBPowerOutConfigStruct:
 # ============== POWER SUPPLIES ==================
 
 
+TBOnOffState = {
+    'OFF': 0,
+    'ON': 1
+}
+
 TBPowerSupplyOffMethod = {
     'OFF_HIZ': 0,
     'OFF_SHORTCUT': 1
