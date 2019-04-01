@@ -59,18 +59,14 @@ def crc16(buff: bytearray):
 
 def unpack_net0_frame(frame: bytearray):
     unpacked = bytearray()
-    un_dle_next_byte = 0
-    for b in frame:
-        if b == 0x02 or b == 0x03:
-            pass
-        elif b == 0x10:
-            un_dle_next_byte = 1
+    if frame[0] != 0x02 or frame[-1] != 0x03:
+        return None
+    iframe = iter(frame[1:-1])
+    for b in iframe:
+        if b == 0x10:
+            unpacked.append(next(iframe, None) & 0x7F)
         else:
-            if un_dle_next_byte == 0:
-                unpacked.append(b)
-            else:
-                unpacked.append(b & 0x7F)
-                un_dle_next_byte = 0
+            unpacked.append(b)
     # print(str(unpacked.hex()))
     if crc16(unpacked[:-2]) == struct.unpack(">H", unpacked[-2:])[0]:
         return unpacked[:-2]
