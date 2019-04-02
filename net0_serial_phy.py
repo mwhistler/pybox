@@ -15,6 +15,7 @@ class Net0SerialPhy:
     def close(self):
         self.stop_receiver_thread = True
         while self.receiver_thread.isAlive():
+            time.sleep(0.01)
             pass
         self.serial_port.close()
         print("Net0SerialPhy closed")

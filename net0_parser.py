@@ -2,9 +2,6 @@ import struct
 
 
 class NET0CommandResult:
-    code = 0
-    status = 0
-    data = bytearray()
 
     def __init__(self, net0_frame_data_field):
         if net0_frame_data_field is not None:
@@ -14,8 +11,6 @@ class NET0CommandResult:
 
 
 class NET0Command:
-    code = 0
-    data = bytearray()
 
     def __init__(self, code: int, data: bytearray):
         self.code = code

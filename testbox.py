@@ -4,16 +4,15 @@ from net0_parser import NET0Command
 from testbox_types import TBChannels
 from testbox_types import TBCommands
 from testbox_types import TBRegisters
-from testbox_types import TBRelayOutConfigStruct
 from testbox_types import TBErrorCodes
 from testbox_types import SC
 import testbox_types
 
 
 class Testbox(Net0SerialDevice):
-    registers = {}
 
     def __init__(self, serial_port_name):
+        self.registers = {}
         super(Testbox, self).__init__(serial_port_name)
 
     # USAGE: cmd_read_register('REG_SOFTWARE_VERSION') or like in read_registers() function
