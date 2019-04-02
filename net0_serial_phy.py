@@ -1,14 +1,15 @@
 import serial
 import threading
+import time
 
 
 class Net0SerialPhy:
-    serial_port = serial.Serial()
-    receiver_thread = threading.Thread
-    frames_received = []
-    stop_receiver_thread = False
-
     def __init__(self, serial_port_name):
+        self.serial_port = serial.Serial()
+        self.receiver_thread = threading.Thread
+        self.stop_receiver_thread = False
+        self.received_data = bytearray()
+        self.frames_received = []
         self.open(serial_port_name)
 
     def close(self):
@@ -19,17 +20,25 @@ class Net0SerialPhy:
         print("Net0SerialPhy closed")
 
     def receiver(self):
-        while self.stop_receiver_thread is False and self.serial_port.is_open:
-            data = bytearray()
-            while self.stop_receiver_thread is False and self.serial_port.read() != bytes([0x02]):
-                pass
-            data.append(0x02)
-            while data[-1] != 0x03:
-                data.append(self.serial_port.read()[0])
-            print("data recv: " + str(data.hex()))
-            self.frames_received.append(data)
-            # print("RECEIVED FRAMES QUEUE SIZE: " + str(frames_received.__len__()))
-            # return data
+        while self.stop_receiver_thread is False:
+            try:
+                if self.serial_port.inWaiting():
+                    self.received_data += self.serial_port.read(self.serial_port.inWaiting())
+
+                try:
+                    if self.received_data[0] != 0x02:
+                        self.received_data[:self.received_data.index(0x02)] = []
+                    etx_index = self.received_data.index(0x03)
+                except (ValueError, IndexError):
+                    time.sleep(0.01)
+                    continue
+
+                print("data recv: " + str(bytearray(self.received_data[:etx_index + 1]).hex()))
+                self.frames_received.append(bytearray(self.received_data[:etx_index + 1]))
+                self.received_data = self.received_data[etx_index:]
+
+            except serial.SerialException:
+                self.close()
 
     def receive(self):
         try:
@@ -38,7 +47,7 @@ class Net0SerialPhy:
             return None
 
     def send(self, data: bytearray):
-        if not isinstance(data, bytearray):
+        if type(data) is not bytearray:
             raise TypeError('expected %s or bytearray, got %s' % (bytearray, type(data)))
         self.serial_port.write(data)
         print("data sent: " + str(data.hex()))

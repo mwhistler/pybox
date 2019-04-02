@@ -4,9 +4,8 @@ import time
 
 
 class Net0SerialDevice:
-    phy = Net0SerialPhy
-
     def __init__(self, serial_port_name):
+        # TODO: make phy an abstraction
         self.phy = Net0SerialPhy(serial_port_name)
 
     # returns NET0CommandResult object:
@@ -17,11 +16,12 @@ class Net0SerialDevice:
             rcv = self.phy.receive()
             if rcv is not None:
                 return net0_parser.extract_command_result_from_frame(rcv)
+            time.sleep(0.01)
         return None
 
     # sends NET0Command object:
     def send_command(self, command: net0_parser.NET0Command):
-        if not isinstance(command, net0_parser.NET0Command):
+        if type(command) is not net0_parser.NET0Command:
             raise TypeError('expected %s or bytearray, got %s' % (net0_parser.NET0Command, type(command)))
         self.phy.send(net0_parser.create_frame(command))
 
