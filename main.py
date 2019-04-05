@@ -19,9 +19,17 @@ tbox.cmd_channel_config('PWR0', [4000, 'OFF_SHORTCUT'])
 
 tbox.cmd_set_channel('REL1', 3)
 
+v = tbox.cmd_get_channel('VIN0')
+print(str(v.value))
+
 # tbox.cmd_set_channel('PWR0', 1)
 # time.sleep(3)
 # tbox.cmd_set_channel('PWR0', 0)
 
 # tbox.cmd_set_channel('OD1', 5)
+
+# tbox.channels.VIN0.configure('STATIC', 'N_OFF', 1, 1, 10000)
+# tbox.channels.VIN0.set(1)
+# tbox.channels.VIN0.get()
+
 tbox.close()

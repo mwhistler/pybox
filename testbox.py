@@ -66,7 +66,7 @@ class Testbox(Net0SerialDevice):
                 print("cmd_channel_config error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])
         return False
 
-    def cmd_set_channel(self, channel, value, board_id=0):
+    def cmd_set_channel(self, channel, value, board_id = 0):
         cdata = struct.pack("<H", board_id) + \
                 struct.pack("<H", TBChannels[channel]) + \
                 struct.pack("<I", value)
@@ -76,11 +76,15 @@ class Testbox(Net0SerialDevice):
         else:
             print("cmd_set_channel error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])
 
-    def cmd_get_channel(self):
-        pass
-
-
-class TestBoxMeasureResult:
-
-    def __init__(self, datafield):
-        pass
+    def cmd_get_channel(self, channel, board_id = 0):
+        cdata = struct.pack("<H", board_id) + \
+                struct.pack("<H", TBChannels[channel])
+        rsp = self.exec_command(NET0Command(TBCommands['CMD_GET_CHANNEL'], cdata))
+        if SC(rsp.status) == SC.SUCCESS:
+            return testbox_types.TBReadout(rsp.data)
+        elif SC(rsp.status) == SC.IN_PROGRESS:
+            rsp = self.get_result()
+            if SC(rsp.status) == SC.SUCCESS:
+                return testbox_types.TBReadout(rsp.data)
+        else:
+            print("cmd_get_channel error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])

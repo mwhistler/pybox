@@ -1,6 +1,6 @@
 import enum
 import struct
-
+import net0_parser
 # this implementation fills TestBox specification v. 19
 # which is available at [confluence_link]
 
@@ -37,6 +37,28 @@ def prepare_channel_config_struct(channel, config: list):
         return None
 
     return cdata + cfg_struct
+
+
+class TBChannelID:
+    def __init__(self, byts: bytearray):
+        self.board_id = struct.unpack("<H", byts[:2])[0]
+        self.channel = struct.unpack("<H", byts[2:])[0]
+
+
+class TBReadout:
+    def __init__(self, read: bytearray):
+        self.channel = TBChannelID(read[:4])
+        self.timestamp = struct.unpack("<I", read[4:8])[0]
+        self.value = struct.unpack("<i", read[8:12])[0]
+        if len(read) > 12:
+            unit = struct.unpack("<i", read[12:16])[0]
+            self.value *= 10**((unit - 4) * 3)
+        print("value: " + str(self.value))
+
+def unpack_measure_from_rsp(rsp: net0_parser.NET0CommandResult):
+    if rsp.status == SC.SUCCESS:
+        return TBReadout(rsp.data)
+    pass
 
 
 TBErrorCodes = {
