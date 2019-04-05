@@ -9,11 +9,12 @@ from testbox_types import SC
 import testbox_types
 
 
-class Testbox(Net0SerialDevice):
+class TestBox(Net0SerialDevice):
 
-    def __init__(self, serial_port_name):
+    def __init__(self, serial_port_name, low_level_info=True):
         self.registers = {}
-        super(Testbox, self).__init__(serial_port_name)
+        self.print_channel_operations_info = True
+        super(TestBox, self).__init__(serial_port_name, low_level_info)
 
     # USAGE: cmd_read_register('REG_SOFTWARE_VERSION') or like in read_registers() function
     def cmd_read_register(self, register: TBRegisters):
@@ -52,43 +53,35 @@ class Testbox(Net0SerialDevice):
 
     def cmd_channel_config(self, channel: TBChannels.keys, config: list, board_id=0):
         cfg_struct = None
-
         if board_id == 0:
             cfg_struct = testbox_types.prepare_channel_config_struct(channel, config)
         else:  # board_id != 0 - call functions from modules
-            pass
+            pass  # TODO
 
         if cfg_struct is not None:
             rsp = self.exec_command(NET0Command(TBCommands['CMD_CHANNEL_CONFIG'], cfg_struct))
             if SC(rsp.status) == SC.SUCCESS:
-                return True
-            else:
-                print("cmd_channel_config error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])
-        return False
+                return rsp
+            elif SC(rsp.status) == SC.IN_PROGRESS:
+                rsp = self.get_result()
+                if SC(rsp.status) == SC.SUCCESS:
+                    return rsp
+        return rsp
 
     def cmd_set_channel(self, channel, value, board_id=0):
+
         cdata = struct.pack("<H", board_id) + \
                 struct.pack("<H", TBChannels[channel]) + \
                 struct.pack("<I", value)
         rsp = self.exec_command(NET0Command(TBCommands['CMD_SET_CHANNEL'], cdata))
-        if SC(rsp.status) == SC.SUCCESS:
-            return True
-        elif SC(rsp.status) == SC.IN_PROGRESS:
+        if SC(rsp.status) == SC.IN_PROGRESS:
             rsp = self.get_result()
-            if SC(rsp.status) == SC.SUCCESS:
-                return True
-        print("cmd_set_channel error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])
-        return False
+        return rsp
 
     def cmd_get_channel(self, channel, board_id=0):
         cdata = struct.pack("<H", board_id) + \
                 struct.pack("<H", TBChannels[channel])
         rsp = self.exec_command(NET0Command(TBCommands['CMD_GET_CHANNEL'], cdata))
-        if SC(rsp.status) == SC.SUCCESS:
-            return testbox_types.TBReadout(rsp.data)
-        elif SC(rsp.status) == SC.IN_PROGRESS:
+        if SC(rsp.status) == SC.IN_PROGRESS:
             rsp = self.get_result()
-            if SC(rsp.status) == SC.SUCCESS:
-                return testbox_types.TBReadout(rsp.data)
-        else:
-            print("cmd_get_channel error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])
+        return rsp

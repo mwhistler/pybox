@@ -53,7 +53,7 @@ class TBReadout:
         if len(read) > 12:
             unit = struct.unpack("<i", read[12:16])[0]
             self.value *= 10**((unit - 4) * 3)
-        print("value: " + str(self.value))
+
 
 def unpack_measure_from_rsp(rsp: net0_parser.NET0CommandResult):
     if rsp.status == SC.SUCCESS:
