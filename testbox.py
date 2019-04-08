@@ -71,10 +71,17 @@ class Testbox(Net0SerialDevice):
                 struct.pack("<H", TBChannels[channel]) + \
                 struct.pack("<I", value)
         rsp = self.exec_command(NET0Command(TBCommands['CMD_SET_CHANNEL'], cdata))
-        if SC(rsp.status) == SC.SUCCESS or SC(rsp.status) == SC.IN_PROGRESS:
+        if SC(rsp.status) == SC.SUCCESS:
             return True
+        elif SC(rsp.status) == SC.IN_PROGRESS:
+            rsp = self.get_result()
+            if SC(rsp.status) == SC.SUCCESS:
+                return True
+            else:
+                return False
         else:
             print("cmd_set_channel error 0x" + str(bytearray([rsp.status]).hex()) + " " + TBErrorCodes[rsp.status])
+            return False
 
     def cmd_get_channel(self, channel, board_id = 0):
         cdata = struct.pack("<H", board_id) + \
