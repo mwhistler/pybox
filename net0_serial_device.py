@@ -4,9 +4,9 @@ import time
 
 
 class Net0SerialDevice:
-    def __init__(self, serial_port_name):
+    def __init__(self, serial_port_name, low_level_info=True):
         # TODO: make phy an abstraction
-        self.phy = Net0SerialPhy(serial_port_name)
+        self.phy = Net0SerialPhy(serial_port_name, low_level_info)
 
     # returns NET0CommandResult object:
     # TODO: improve timeout handling

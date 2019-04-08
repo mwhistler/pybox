@@ -4,13 +4,14 @@ import time
 
 
 class Net0SerialPhy:
-    def __init__(self, serial_port_name):
+    def __init__(self, serial_port_name, low_level_info=True):
         self.serial_port = serial.Serial()
         self.receiver_thread = threading.Thread
         self.stop_receiver_thread = False
         self.received_data = bytearray()
         self.frames_received = []
         self.open(serial_port_name)
+        self.low_level_info = low_level_info
 
     def close(self):
         self.stop_receiver_thread = True
@@ -18,7 +19,8 @@ class Net0SerialPhy:
             time.sleep(0.01)
             pass
         self.serial_port.close()
-        print("Net0SerialPhy closed")
+        if self.low_level_info:
+            print("Net0SerialPhy closed")
 
     def receiver(self):
         while self.stop_receiver_thread is False:
@@ -34,7 +36,8 @@ class Net0SerialPhy:
                     time.sleep(0.01)
                     continue
 
-                print("data recv: " + str(bytearray(self.received_data[:etx_index + 1]).hex()))
+                if self.low_level_info:
+                    print("data recv: " + str(bytearray(self.received_data[:etx_index + 1]).hex()))
                 self.frames_received.append(bytearray(self.received_data[:etx_index + 1]))
                 self.received_data = self.received_data[etx_index:]
 
@@ -51,7 +54,8 @@ class Net0SerialPhy:
         if type(data) is not bytearray:
             raise TypeError('expected %s or bytearray, got %s' % (bytearray, type(data)))
         self.serial_port.write(data)
-        print("data sent: " + str(data.hex()))
+        if self.low_level_info:
+            print("data sent: " + str(data.hex()))
 
     def open(self, serial_port_name):
         self.serial_port.baudrate = 115200
