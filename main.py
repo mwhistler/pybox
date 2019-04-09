@@ -1,5 +1,4 @@
 import testbox
-import time
 from testbox_fixture import TestBoxFixture
 
 

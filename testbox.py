@@ -1,12 +1,9 @@
 import struct
 from net0_serial_device import Net0SerialDevice
 from net0_parser import NET0Command
-from testbox_types import TBChannels
-from testbox_types import TBCommands
-from testbox_types import TBRegisters
-from testbox_types import TBErrorCodes
-from testbox_types import SC
-import testbox_types
+from testbox_onboard_types import TBOnBoardChannels
+from testbox_common_types import TBErrorCodes, SC, TBCommands, TBRegisters
+import testbox_onboard_types
 
 
 class TestBox(Net0SerialDevice):
@@ -25,16 +22,8 @@ class TestBox(Net0SerialDevice):
                 return
         del self.registers[register]
 
-    def read_registers(self):
-        for register in TBRegisters.keys():
-            self.cmd_read_register(register)
-
-    def print_registers(self):
-        for register, value in self.registers.items():
-            print(register + ": " + str(bytearray(value).hex()))
-
     # cmd_write_register works only with binary content
-    # TODO: create user friendly functions, for example: set_next_calibration_date(date) etc
+    # TODO: create user friendly functions i testbox_fixture, for example: set_next_calibration_date(date) etc
     def cmd_write_register(self, register: TBRegisters, data):
         data = bytearray(data)
         if data.__len__() == TBRegisters[register]['size']:
@@ -51,10 +40,10 @@ class TestBox(Net0SerialDevice):
                         rsp.status])
         print(register + "write FAILED")
 
-    def cmd_channel_config(self, channel: TBChannels.keys, config: list, board_id=0):
+    def cmd_channel_config(self, channel: TBOnBoardChannels.keys, config: list, board_id=0):
         cfg_struct = None
         if board_id == 0:
-            cfg_struct = testbox_types.prepare_channel_config_struct(channel, config)
+            cfg_struct = testbox_onboard_types.prepare_channel_config_struct(channel, config)
         else:  # board_id != 0 - call functions from modules
             pass  # TODO
 
@@ -71,7 +60,7 @@ class TestBox(Net0SerialDevice):
     def cmd_set_channel(self, channel, value, board_id=0):
 
         cdata = struct.pack("<H", board_id) + \
-                struct.pack("<H", TBChannels[channel]) + \
+                struct.pack("<H", TBOnBoardChannels[channel]) + \
                 struct.pack("<I", value)
         rsp = self.exec_command(NET0Command(TBCommands['CMD_SET_CHANNEL'], cdata))
         if SC(rsp.status) == SC.IN_PROGRESS:
@@ -80,7 +69,7 @@ class TestBox(Net0SerialDevice):
 
     def cmd_get_channel(self, channel, board_id=0):
         cdata = struct.pack("<H", board_id) + \
-                struct.pack("<H", TBChannels[channel])
+                struct.pack("<H", TBOnBoardChannels[channel])
         rsp = self.exec_command(NET0Command(TBCommands['CMD_GET_CHANNEL'], cdata))
         if SC(rsp.status) == SC.IN_PROGRESS:
             rsp = self.get_result()
