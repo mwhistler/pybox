@@ -1,7 +1,6 @@
 import testbox
 from testbox_fixture import TestBoxFixture
 
-
 tbox = testbox.TestBox("COM7", False)
 
 fx = TestBoxFixture(tbox)

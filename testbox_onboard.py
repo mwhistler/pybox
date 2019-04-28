@@ -158,10 +158,6 @@ TBOutIdleState = {
 
 
 class TBRelayOutConfigStruct:
-    operating_mode = TBOutOperatingMode
-    idle_state = TBOutIdleState
-    pulse_width = 0
-    pulse_period = 0
 
     # TODO: add parameters assets
     def __init__(self, config: list):
@@ -188,11 +184,6 @@ class TBRelayOutConfigStruct:
 
 
 class TBPowerOutConfigStruct:
-    operating_mode = TBOutOperatingMode
-    idle_state = TBOutIdleState
-    pulse_width = 1
-    pulse_period = 1
-    pwm_frequency = 10000
 
     # TODO: improve parameters assets
     # TODO: discriminate OD and PWM channels
@@ -200,6 +191,10 @@ class TBPowerOutConfigStruct:
         if len(config) >= 2:
             self.operating_mode = TBOutOperatingMode[config[0]]
             self.idle_state = TBOutIdleState[config[1]]
+            # defaults:
+            self.pulse_width = 1
+            self.pulse_period = 1
+            self.pwm_frequency = 1000
             if len(config) > 2:
                 if len(config) == 5:
                     self.pulse_width = config[2]
@@ -238,8 +233,6 @@ TBPowerSupplyOffMethod = {
 
 
 class TBPowerSupplyConfigStruct:
-    output_voltage = 2600
-    off_method = 0
 
     # TODO: add parameters assets
     def __init__(self, config: list):
@@ -266,8 +259,6 @@ TBAmmeterRange = {
 
 
 class TBAmmeterConfigStruct:
-    range = 0
-    averaging_time = 8
 
     # TODO: add parameters assets
     def __init__(self, config: list):
@@ -288,7 +279,6 @@ class TBAmmeterConfigStruct:
 
 
 class TBVoltimeterConfigStruct:
-    averaging_time = 8
 
     def __init__(self, config: list):
         if len(config) == 1 and config[0] in [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]:
@@ -309,7 +299,6 @@ class TBVoltimeterConfigStruct:
 
 
 class TBAnalogInConfigStruct:
-    pga_gain = 1
 
     # TODO: add parameters assets
     def __init__(self, config: list):
@@ -367,18 +356,8 @@ TBTimeMeasureMode = {
 # U16: TIMEOUT [ms]
 # U16: PROBES [1-100]
 
+
 class TBDigitalIOConfigStruct:
-    io_direcion = TBIODirection
-    operating_mode = TBOutOperatingMode
-    idle_state = TBOutIdleState
-    input_sensitivity = TBInputSensitivity
-    pulse_width = 0
-    pulse_period = 0
-    pull_up = TBPullUp
-    input_operating_mode = TBInputOperatingMode
-    time_measure_mode = TBTimeMeasureMode
-    timeout = 0
-    probes = 0
 
     # TODO: add parameters assets
     def __init__(self, config: list):

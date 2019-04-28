@@ -1,8 +1,9 @@
 import testbox
-import testbox_common_types
-import testbox_onboard_types
-from testbox_common_types import SC
+import testbox_common
+import testbox_onboard
+from testbox_common import SC
 import time
+import enum
 
 # this class wraps around TestBox low level functions to provide user friendly interface
 
@@ -16,7 +17,7 @@ class TestBoxFixture:
         # self.print_registers()
 
     def read_registers(self):
-        for register in testbox_common_types.TBRegisters.keys():
+        for register in testbox_common.TBRegisters.keys():
             self.tb.cmd_read_register(register)
 
     def print_registers(self):
@@ -28,7 +29,7 @@ class TestBoxFixture:
             print("delay for " + str(seconds) + "s")
         time.sleep(seconds)
 
-    def channel_config(self, channel: testbox_onboard_types.TBOnBoardChannels.keys, config: list, board_id=0):
+    def channel_config(self, channel: testbox_onboard.TBOnBoardChannels.keys, config: list, board_id=0):
         """
 
         :rtype: Net0Response
@@ -39,7 +40,7 @@ class TestBoxFixture:
         if SC(rsp.status) != SC.SUCCESS:
             if self.print_channel_operations_info:
                 print("channel_config: error 0x" + str(bytearray([rsp.status]).hex()) + " " +
-                      testbox_common_types.TBErrorCodes[rsp.status])
+                      testbox_common.TBErrorCodes[rsp.status])
         return rsp
 
     def get_channel(self, channel, board_id=0):
@@ -47,14 +48,14 @@ class TestBoxFixture:
         rsp = self.tb.cmd_get_channel(channel, board_id)
 
         if SC(rsp.status) == SC.SUCCESS:
-            readout = testbox_common_types.TBReadout(rsp.data)
+            readout = testbox_common.TBReadout(rsp.data)
             if self.print_channel_operations_info:
                 print("get_channel: B" + str(board_id) + "." + channel + ": " + str(readout.value))
             return readout
         else:
             if self.print_channel_operations_info:
                 print("get_channel: B" + str(board_id) + "." + channel + ": error 0x" +
-                      str(bytearray([rsp.status]).hex()) + " " + testbox_common_types.TBErrorCodes[rsp.status])
+                      str(bytearray([rsp.status]).hex()) + " " + testbox_common.TBErrorCodes[rsp.status])
         return None
 
     def set_channel(self, channel, value, board_id=0):
@@ -67,7 +68,7 @@ class TestBoxFixture:
             else:
                 print("set_channel: B" + str(board_id) + "." + channel + ": " + "error 0x" +
                       str(bytearray([rsp.status]).hex()) + " " +
-                      testbox_common_types.TBErrorCodes[rsp.status])
+                      testbox_common.TBErrorCodes[rsp.status])
 
         return rsp
 

@@ -1,10 +1,12 @@
 import struct
 from net0_serial_device import Net0SerialDevice
 from net0_parser import NET0Command
-from testbox_onboard_types import TBOnBoardChannels
-from testbox_common_types import TBErrorCodes, SC, TBCommands, TBRegisters
-import testbox_onboard_types
-
+from testbox_onboard import TBOnBoardChannels
+from testbox_common import TBErrorCodes, SC, TBCommands, TBRegisters
+import testbox_onboard
+import testbox_ext_isolated_voltimeter
+import testbox_ext_mbus
+import testbox_ext_rf
 
 class TestBox(Net0SerialDevice):
 
@@ -43,7 +45,13 @@ class TestBox(Net0SerialDevice):
     def cmd_channel_config(self, channel: TBOnBoardChannels.keys, config: list, board_id=0):
         cfg_struct = None
         if board_id == 0:
-            cfg_struct = testbox_onboard_types.prepare_channel_config_struct(channel, config)
+            cfg_struct = testbox_onboard.prepare_channel_config_struct(channel, config)
+        elif board_id == 1:
+            cfg_struct = testbox_ext_mbus.prepare_channel_config_struct(channel, config)
+        elif board_id == 2:
+            cfg_struct = testbox_ext_rf.prepare_channel_config_struct(channel, config)
+        elif board_id == 3:
+                cfg_struct = testbox_ext_isolated_voltimeter.prepare_channel_config_struct(channel, config)
         else:  # board_id != 0 - call functions from modules
             pass  # TODO
 
