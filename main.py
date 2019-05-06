@@ -2,7 +2,7 @@ import testbox
 from testbox_fixture import TestBoxFixture
 
 
-tbox = testbox.TestBox("COM7", False)
+tbox = testbox.TestBox("COM46", False)
 
 fx = TestBoxFixture(tbox)
 # examples:
