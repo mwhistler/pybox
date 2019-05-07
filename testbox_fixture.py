@@ -13,7 +13,7 @@ class TestBoxFixture:
         self.tb = tb
         self.print_channel_operations_info = True
         self.print_info = True
-        self.read_registers()
+        # self.read_registers()
         # self.print_registers()
 
     def read_registers(self):
