@@ -27,9 +27,9 @@ fx.set_channel('PWM2', 0)
 
 # Turning off programmer
 print("Odlaczenie programatora")
-fx.set_channel('REL0', 0)
-fx.set_channel('REL1', 0)
-fx.set_channel('REL2', 0)
-fx.set_channel('REL3', 0)
+fx.set_channel('REL0', 1)
+fx.set_channel('REL1', 1)
+fx.set_channel('REL2', 1)
+fx.set_channel('REL3', 1)
 
 tbox.close()
