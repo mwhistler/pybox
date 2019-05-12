@@ -37,6 +37,21 @@ def create_frame(net0_command: NET0Command):
     return out_frame
 
 
+def create_frame_from_array(frame_arg: bytearray):
+    print("create net0 frame")
+    frame = frame_arg
+    crc = crc16(frame)
+    frame += bytearray([(crc & 0xFF00) >> 8, crc & 0x00FF])
+    out_frame = bytearray([0x02])
+    for b in frame:
+        if b == 0x02 or b == 0x03 or b == 0x10:
+            out_frame.append(0x10)
+            b |= 0x80
+        out_frame.append(b)
+    out_frame.append(0x03)
+    return out_frame
+
+
 def crc16(buff: bytearray):
     result = 0xFFFF
     for bajt in buff:
