@@ -44,6 +44,7 @@ class Dut:
             time.sleep(0.1)
             frame_net0 = self.serial_port.read_all()
             if frame_net0:
+                print("odczt z portu COM: " + str((bytearray(frame_net0).hex())))
                 return net0_parser.unpack_net0_frame(frame_net0)
             if counter > 10:
                 break
