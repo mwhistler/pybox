@@ -3,6 +3,7 @@ import threading
 import time
 import net0_parser
 import elf_module_common
+import struct
 
 
 class Dut:
@@ -60,7 +61,10 @@ class Dut:
             if response[0] == (0x80 | command):
                 frame_data = list(response)
                 frame_data.pop(0)               #wykasuj rozkaz z ramki
-                return frame_data
+                buf_data = bytes()
+                for val in frame_data:
+                    buf_data += struct.pack('B', val)
+                return buf_data
             elif response[0] == elf_module_common.ModuleCommands['ANS_UNEXPECTED']:
                 return elf_module_common.CommandStat.COMMAND_NOT_IMPLEMENTED
             else:

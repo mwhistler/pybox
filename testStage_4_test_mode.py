@@ -23,10 +23,10 @@ print("Poczatek czytania portu DUT")
 if elfModule.set_config():
     print("DUT jest w trybie testowym")
     response = elfModule.send_test_command(elf_module_common.ModuleCommands['CMD_START'], [0x00, 0x00])
-    if isinstance(response, (list,)):
+    if isinstance(response, (bytes,)):
         print("Odebrano odpowedz z DUT'a")
-        response_ok = [0x00, 0x00]
-        if response_ok == response:
+        response_ok = 0
+        if elf_module_common.get_test_mode_stat(response) == response_ok:
             print("Urzadzenie gotowe do testow")
             exit(1)
         print("odpowiedz =", str(response))

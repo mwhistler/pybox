@@ -1,4 +1,5 @@
 import enum
+import struct
 
 
 class CommandStat(enum.Enum):
@@ -32,3 +33,12 @@ ModuleCommands = {
     'CMD_ERASE_ID': 0x12,
     'ANS_UNEXPECTED': 0xff,
 }
+
+
+def get_rtc_stat(data_buf: bytes):
+    stat = struct.unpack_from('>H', data_buf, 0)
+    return stat[0]
+
+
+def get_test_mode_stat(data_buf: bytes):
+    return get_rtc_stat(data_buf)
