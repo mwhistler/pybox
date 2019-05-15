@@ -71,3 +71,8 @@ TBRegisters = {
     'REG_TOOLSET_ID': {'code': 0x10, 'size': 4},
     'REG_TOOLS': {'code': 0x11, 'size': 128},
 }
+
+TBControl = {
+    'DEV_CTRL_USBUSART_BRIDGE': {'code': 0x01, 'size': 1},
+    'DEV_CTRL_AMMETER_OFFSET_NULL': {'code': 0x02, 'size': 4},
+}

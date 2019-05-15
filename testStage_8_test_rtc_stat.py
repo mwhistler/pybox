@@ -3,20 +3,9 @@ import elf_module_common
 import struct
 
 
-#tbox = testbox.TestBox("COM46", 115200, True)
 
 elfModule = dut.Dut("COM49", True)
 
-#fx = TestBoxFixture(tbox)
-
-
-# set test mode in DUT:
-# power off
-#TODO power off
-#fx.delay(1)
-
-# power on
-#TODO power on
 
 print("Poczatek czytania portu DUT")
 

@@ -56,7 +56,7 @@ TBOnBoardChannels = {
     'REL2': 0x0062,
     'REL3': 0x0063,
     'AMP0': 0x0070,
-    'AMP1': 0x0070,
+    'AMP1': 0x0071,
     'VIN0': 0x0080,
     'VIN1': 0x0081,
     'VIN2': 0x0082,
@@ -262,7 +262,7 @@ class TBAmmeterConfigStruct:
 
     # TODO: add parameters assets
     def __init__(self, config: list):
-        self.range = TBAmmeterConfigStruct[config[0]]
+        self.range = TBAmmeterRange[config[0]]
         self.averaging_time = config[1]
 
     def bytes(self):

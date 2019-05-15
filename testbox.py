@@ -2,7 +2,7 @@ import struct
 from net0_serial_device import Net0SerialDevice
 from net0_parser import NET0Command
 from testbox_onboard import TBOnBoardChannels
-from testbox_common import TBErrorCodes, SC, TBCommands, TBRegisters
+from testbox_common import TBErrorCodes, SC, TBCommands, TBRegisters, TBControl
 import testbox_onboard
 import testbox_ext_isolated_voltimeter
 import testbox_ext_mbus
@@ -82,3 +82,15 @@ class TestBox(Net0SerialDevice):
         if SC(rsp.status) == SC.IN_PROGRESS:
             rsp = self.get_result()
         return rsp
+
+    def cmd_amp0_calibrate(self, arg, control: TBControl):
+        chann = [0x02, 0x00, 0x00, 0x70, 0x00]      #tylko dla kalibracji,docelowo zrobic jak trzeba
+        rsp = self.exec_command(NET0Command(TBCommands['CMD_DEVICE_CONTROL'], chann))
+        if rsp is not None and SC(rsp.status) == SC.IN_PROGRESS:
+            print("in progress")
+            rsp = self.get_result()
+        if rsp is not None and SC(rsp.status) == SC.SUCCESS:
+            print("SUCESS")
+            #if rsp.data[0] == TBControl[control]['code'] and rsp.data[1] == TBControl[control]['size']:
+                #self.registers[control] = rsp.data[2:]
+            return
