@@ -37,7 +37,7 @@ print("wylaczenie zasilania")
 fx.set_channel('PWR1', 0)
 fx.channel_config('OD1', ['STATIC', 'N_OFF'])  # without optional parameters, use for OD or PWM as static/pulse
 fx.set_channel('OD1', 1)                #power off
-fx.channel_config('PWR0', [3000, 'OFF_HIZ'])
+fx.channel_config('PWR0', [3600, 'OFF_HIZ'])
 fx.channel_config('AMP0', ['IR_LOW', 128])
 print("Wlacz zasilanie 3,0V na wejście amperomierza")
 fx.set_channel('PWR0', 1)

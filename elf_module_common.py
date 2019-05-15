@@ -25,7 +25,7 @@ ModuleCommands = {
     'CMD_WRITE_50MHZ_CALIB': 0x0A,
     'CMD_READ_CONF': 0x0B,
     'CMD_UART_SEND': 0x0C,
-    'CMD_RESERVED': 0x0D,
+    'TEST_CMD_READ_VCC_PIN': 0x0D,
     'CMD_RTCSTAT_SEND': 0x0E,
     'CMD_STOP': 0x0F,
     'CMD_WRITE_ID': 0x10,
@@ -37,6 +37,11 @@ ModuleCommands = {
 
 def get_rtc_stat(data_buf: bytes):
     stat = struct.unpack_from('>H', data_buf, 0)
+    return stat[0]
+
+
+def get_pin_stat(data_buf: bytes):
+    stat = struct.unpack_from('B', data_buf, 0)
     return stat[0]
 
 

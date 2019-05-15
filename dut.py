@@ -75,15 +75,19 @@ class Dut:
         time_counter = 0
         while True:
             rcv = self.serial_port.read_all()
-            command = [0x4d, 0x40, 0x09, 0xff, 0xff, 0xd0, 0xff, 0x16]
-            if len(rcv) > 0 and self.low_level_info:
+            rcv_list = list(rcv)
+            command = [0x4d, 0x40, 0x09, 0xff, 0xff, 0xd0, 0x16]
+            if len(rcv_list) > 0 and self.low_level_info:
+                while len(rcv_list) > 0 and rcv_list[0] != 0x4d:
+                    rcv_list.pop(0)
+
                 print("odczyt z portu COM: " + str((bytearray(rcv).hex())))
-            if command == list(rcv):
+            if list(command) == list(rcv_list):
                 print("Odebrano rzadanie konfiguracji")
                 break
-            time.sleep(1)
+            time.sleep(0.1)
             time_counter += 1
-            if time_counter > 10:
+            if time_counter > 100:
                 print("Brak ramki konfiguracyjnej")
                 return False
 
